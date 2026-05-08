@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 
 // Middle Ware
@@ -33,6 +33,20 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = {
+        _id: new ObjectId(id),
+      };
+
+      const user = await userCollection.findOne(query);
+
+      console.log(user);
+
+      res.send(user);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
@@ -41,7 +55,7 @@ async function run() {
     console.log(error);
   }
 }
-run()
+run();
 
 app.get("/", (req, res) => {
   res.send("Simple crud server is running!");
